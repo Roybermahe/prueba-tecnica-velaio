@@ -9,4 +9,9 @@ export class TareaService extends Repository<ITareas> {
     constructor() {
         super('TAREAS');
     }
+
+    checkNombreTarea(nombre: string) {
+      return this.$list.getValue().some(i => i.nombre.toLowerCase() === nombre.toLowerCase() && i.estado === 'PENDIENTE')
+    }
+
 }

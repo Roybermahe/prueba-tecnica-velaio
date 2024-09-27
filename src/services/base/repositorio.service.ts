@@ -7,6 +7,12 @@ export class Repository<T> {
 
     constructor(key: string) {
         this.storedKey = key;
+        if(this.$list.getValue().length == 0) {
+          const data = localStorage.getItem(key);
+          if(data !== null) {
+            this.$list.next(JSON.parse(data));
+          }
+        }
         this.$list.subscribe(resp => {
             localStorage.setItem(this.storedKey, JSON.stringify(resp));
         })
@@ -23,6 +29,7 @@ export class Repository<T> {
     }
 
     actualizar(index: number, data: T) {
+
         const values = this.$list.getValue();
         values[index] = data;
         this.$list.next(values);
