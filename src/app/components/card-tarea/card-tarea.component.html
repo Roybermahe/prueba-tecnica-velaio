@@ -1,0 +1,72 @@
+<div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
+  <div class="space-y-3" *ngIf="tarea">
+    <div class="flex justify-between">
+      <div class="flex gap-x-1.5 text-xs text-blue-600" *ngIf="tarea.estado === 'PENDIENTE'">
+        <input id="completar-tarea-{{index}}" (change)="completarTarea($event)" class="rounded-sm dark:bg-zinc-900 dark:border-blue-600" type="checkbox">
+        <label for="completar-tarea-{{index}}">Marcar para completar tarea</label>
+      </div>
+      <div class="flex gap-x-1.5 text-xs text-green-600" *ngIf="tarea.estado === 'COMPLETADO'">
+        Tarea completada
+      </div>
+      <button (click)="borrarTarea()">
+        <i class="bx bx-x text-xl text-red-600"></i>
+      </button>
+    </div>
+    <dl class="flex flex-col sm:flex-row gap-1">
+      <dt class="min-w-40">
+        <span class="block text-sm text-gray-500 dark:text-neutral-500">Fecha:</span>
+      </dt>
+      <dd>
+        <ul>
+          <li class="me-1  inline-flex items-center text-sm text-gray-800 dark:text-neutral-200">
+            {{tarea.fecha}}
+          </li>
+        </ul>
+      </dd>
+    </dl>
+    <dl class="flex flex-col sm:flex-row gap-1">
+      <dt class="min-w-40">
+        <span class="block text-sm text-gray-500 dark:text-neutral-500">Tarea:</span>
+      </dt>
+      <dd>
+        <ul>
+          <li class="me-1  inline-flex items-center text-sm text-gray-800 dark:text-neutral-200">
+            {{tarea.nombre}}
+          </li>
+        </ul>
+      </dd>
+    </dl>
+
+    <dl class="flex flex-col sm:flex-row gap-1">
+      <dt class="min-w-40">
+        <span class="block text-sm text-gray-500 dark:text-neutral-500">Personas Asociadas:</span>
+      </dt>
+      <dd>
+        <ul>
+          <li *ngFor="let persona of tarea.personas" class="me-1 after:content-[','] inline-flex items-center text-sm text-gray-800 dark:text-neutral-200">
+            {{persona.nombre | titlecase }} <span class="text-amber-600">( {{persona.edad}} años )</span>
+          </li>
+        </ul>
+      </dd>
+    </dl>
+
+    <dl class="flex flex-col sm:flex-row gap-1">
+      <dt class="min-w-40">
+        <span class="block text-sm text-gray-500 dark:text-neutral-500">Habilidades:</span>
+      </dt>
+      <dd>
+        <ul>
+          <li *ngFor="let persona of tarea.personas" class="me-1  items-center text-sm text-gray-800 dark:text-neutral-200">
+            {{persona.nombre | titlecase }} <span class="mx-1.5">-</span>
+            <ul class="inline-flex pl-2.5 items-center text-sm text-gray-800 dark:text-neutral-200">
+              <li class="after:content-[','] text-blue-700 font-semibold" *ngFor="let habilidad of persona.habilidades">
+                {{habilidad.nombre}}
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </dd>
+    </dl>
+  </div>
+</div>
+<!-- End List -->

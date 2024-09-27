@@ -1,0 +1,129 @@
+<div class="size-full fixed top-4 start-0 z-[80] overflow-x-hidden overflow-y-auto">
+  <div class="mt-0 sm:max-w-lg sm:w-full m-3 sm:mx-auto">
+    <div class="bg-white border border-gray-200 rounded-xl shadow-sm pointer-events-auto dark:bg-neutral-900 dark:border-neutral-800">
+      <div class="p-3 sm:p-7">
+        <div class="text-left flex justify-between">
+          <h6 class="block text-lg sm:text-lg font-semibold text-gray-800 dark:text-neutral-200">Nueva Tarea</h6>
+          <button (click)="onClose()">
+            <i class="bx bx-x text-2xl text-red-600"></i>
+          </button>
+        </div>
+
+        <div [formGroup]="form" class="mt-8 sm:mt-10  space-y-1.5">
+          <!--contenido de inputs-->
+          <div class="grid md:grid-cols-2 md:gap-x-1.5 sm:gap-y-1.5 sm:grid-cols-1">
+            <div>
+              <label for="input-nombre-tarea" class="block text-xs font-medium mb-2 dark:text-white">Nombre de la tarea</label>
+              <input formControlName="nombre" type="text" id="input-nombre-tarea" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" placeholder="Digita el nombre">
+              <ng-container *ngIf="form.get('nombre')?.touched && form.get('nombre')?.errors as nombreTareaErrors">
+                <small *ngIf="nombreTareaErrors['minlength']" class="text-red-600">El nombre de la tarea debe tener minimo 5 caracteres.</small>
+                <small class="text-red-600" *ngIf="nombreTareaErrors['pattern']">El nombre de la tarea no puede tener espacios en blanco.</small>
+                <small *ngIf="nombreTareaErrors['required']" class="text-red-600">El nombre de la tarea es requerido.</small>
+                <small *ngIf="nombreTareaErrors['nombreExistente']" class="text-red-600">Ya hay una tarea con el mismo nombre.</small>
+              </ng-container>
+            </div>
+
+            <div>
+              <label for="input-fecha-tarea" class="block text-xs font-medium mb-2 dark:text-white">Fecha limite</label>
+              <input formControlName="fecha" type="date" id="input-fecha-tarea" [min]="today | date: 'yyyy-MM-dd'" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" placeholder="Digita el nombre">
+              <ng-container *ngIf="form.get('fecha')?.touched && form.get('fecha')?.errors as fechaTareaErrors">
+                <small *ngIf="fechaTareaErrors['required']" class="text-red-600">El fecha limite de la tarea es requerido.</small>
+                <small *ngIf="fechaTareaErrors['minDateToday']" class="text-red-600">El fecha limite no puede ser anterior a la actual.</small>
+              </ng-container>
+            </div>
+          </div>
+
+          <ng-container *ngIf="form.get('personas')?.errors as habilidadesPersonaErrors">
+            <small class="text-gray-600 md:col-span-2 sm:col-span-1 dark:text-gray-400 w-full " *ngIf="habilidadesPersonaErrors['required']"><i class="bx bx-info-circle"></i> La tarea debe tener al menos una persona asociada.</small>
+          </ng-container>
+          <div class="flex justify-between py-2">
+            <p class="mb-2 text-sm dark:text-white">Personas Asociadas</p>
+            <button (click)="asociarPersona()" class="text-blue-600 text-sm">
+              <i class="bx bx-plus"></i>
+              Añadir
+            </button>
+          </div>
+
+          <ng-container formArrayName="personas">
+            <ng-container *ngFor="let controlPersona of personasArr.controls; let i = index">
+              <div formGroupName="{{i}}" class="">
+                <div class="grid md:grid-cols-2 sm:grid-cols-1 md:gap-y-0 sm:gap-y-1.5 gap-x-1.5">
+                  <div>
+                    <label for="input-nombre-persona-{{i}}" class="block text-xs font-medium mb-2 dark:text-white">Nombre de la persona</label>
+                    <input formControlName="nombre" type="text" id="input-nombre-persona-{{i}}" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" placeholder="Nombre de la persona">
+                    <ng-container *ngIf="controlPersona.get('nombre')?.touched && controlPersona.get('nombre')?.errors as nombreAsociadoError">
+                      <small class="text-red-600" *ngIf="nombreAsociadoError['required'] ">El nombre de la persona es requerido.</small>
+                      <small class="text-red-600" *ngIf="nombreAsociadoError['pattern']">El nombre no puede contener espacios en blanco.</small>
+                      <small class="text-red-600" *ngIf="nombreAsociadoError['minlength']">El nombre de la persona debe contener minimo 5 caracteres.</small>
+                    </ng-container>
+                  </div>
+
+                  <div>
+                    <label for="input-edad-persona-{{i}}" class="block text-xs font-medium mb-2 dark:text-white">Edad (Mayor de 18 años)</label>
+                    <input formControlName="edad" type="number" id="input-edad-persona-{{i}}" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" placeholder="Edad">
+                    <ng-container *ngIf="controlPersona.get('edad')?.touched && controlPersona.get('edad')?.errors as edadAsociadoError">
+                      <small class="text-red-600" *ngIf="edadAsociadoError['required']">La edad de la persona es requerido.</small>
+                      <small class="text-red-600" *ngIf="edadAsociadoError['min']">La edad minima permitida es de 18 años.</small>
+                    </ng-container>
+                  </div>
+
+                  <ng-container *ngIf="controlPersona.get('habilidades')?.errors as habilidadesPersonaErrors">
+                    <small class="text-gray-600 md:col-span-2 sm:col-span-1 dark:text-gray-400 w-full mt-5" *ngIf="habilidadesPersonaErrors['required']"><i class="bx bx-info-circle"></i> La persona debe tener una habilidad como minimo.</small>
+                  </ng-container>
+                  <div class="sm:col-span-1 md:col-span-2 flex justify-between py-3">
+                    <button (click)="agregarHabilidad(i)" class="text-green-600 text-sm">
+                      <i class="bx bx-plus"></i>
+                      Añadir Habilidad
+                    </button>
+                    <button (click)="borrarPersona(i)" class="text-red-600 text-sm">
+                      <i class="bx bx-minus"></i>
+                      Eliminar persona
+                    </button>
+
+                  </div>
+                </div>
+
+                <ng-container formArrayName="habilidades">
+                  <ng-container *ngFor="let controlHabilidad of habilidadesArr(i).controls; let j = index">
+                    <div formGroupName="{{j}}" class="flex justify-between pl-5">
+                      <div class="w-[90%]">
+                        <label for="input-habilidad-persona-{{i}}-{{j}}" class="block text-xs font-medium mb-2 dark:text-white">Habilidad {{j+1}}</label>
+                        <input formControlName="nombre" type="text" id="input-habilidad-persona-{{i}}-{{j}}"  class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" placeholder="Java, C#, .Net">
+                        <ng-container *ngIf="controlHabilidad.get('nombre')?.touched && controlHabilidad.get('nombre')?.errors as habilidadError">
+                          <small class="text-red-600" *ngIf="habilidadError['required']">La habilidad de la persona es requerida.</small>
+                          <small class="text-red-600" *ngIf="habilidadError['minlength']">La habilidad debe tener minimo 1 caracter.</small>
+                        </ng-container>
+                      </div>
+
+                      <button (click)="borrarHabilidad(i,j)" class="text-red-600">
+                        <i class="bx bx-trash text-lg"></i>
+                      </button>
+                    </div>
+                  </ng-container>
+                </ng-container>
+              </div>
+            </ng-container>
+          </ng-container>
+        </div>
+      </div>
+
+      <ng-container *ngIf="form.get('personas')?.errors as habilidadesPersonaErrors">
+        <div *ngIf="habilidadesPersonaErrors['nombreDuplicado']" class="py-3.5">
+          <small class="text-red-600 md:col-span-2 sm:col-span-1 p-3.5 mb-10 dark:text-gray-400 "><i class="bx bx-info-circle"></i> La tarea no puede contener varias personas con el mismo nombre.</small>
+        </div>
+      </ng-container>
+      <!-- Footer -->
+      <form [formGroup]="form" (ngSubmit)="form.invalid ? form.markAllAsTouched() : guardarTarea()" class="flex justify-end items-center gap-x-2 p-4 sm:px-7 border-t dark:border-neutral-800">
+
+        <button (click)="onClose()" type="button" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-50 dark:bg-transparent dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" data-hs-overlay="#hs-notifications">
+          Cancelar
+        </button>
+        <button type="submit" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none" href="#">
+          Crear Tarea
+        </button>
+      </form>
+      <!-- End Footer -->
+    </div>
+  </div>
+</div>
+
