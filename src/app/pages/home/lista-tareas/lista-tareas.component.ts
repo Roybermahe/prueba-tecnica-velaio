@@ -22,7 +22,7 @@ export class ListaTareasComponent {
     })
   }
 
-  existenTareas(estado: estados) {
-    return this.lista().some(i => i.estado === estado);
+  existenTareas(estado:string|estados = '') {
+    return estado == '' ? this.lista().length > 0 : this.lista().some(i => i.estado === estado );
   }
 }
