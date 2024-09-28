@@ -74,6 +74,8 @@ export class AgregarTareaComponent {
 
   guardarTarea() {
     this.tareaService.guardar(this.form.value as ITareas);
-    this.form.reset();
+    this.form.reset({
+      estado: 'PENDIENTE'
+    });
   }
 }
